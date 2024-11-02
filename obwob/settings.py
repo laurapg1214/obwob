@@ -36,7 +36,6 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 INSTALLED_APPS = [
     # apps
-    "apps.attendees.apps.AttendeesConfig",
     "apps.authentication.apps.AuthenticationConfig",
     "apps.common.apps.BaseModelConfig", # base model inherited by apps
     "apps.coordinators.apps.CoordinatorsConfig",
@@ -45,7 +44,6 @@ INSTALLED_APPS = [
     "apps.organizations.apps.OrganizationsConfig",
     "apps.questions.apps.QuestionsConfig",
     "apps.reports.apps.ReportsConfig",
-    "apps.responses.apps.ResponsesConfig",
 
     # allow react frontend to make requests to django by configuring cors headers
     "corsheaders",

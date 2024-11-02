@@ -1,8 +1,8 @@
-from apps.attendees.models import EventAttendee
 from apps.common.models import BaseModel
 from apps.events.models import Event
 from apps.organizations.models import Organization
 from django.db import models
+#TODO: need EventDemographic and Participant models from Rails
 
 
 # store demographic categories with field type choices
@@ -30,28 +30,7 @@ class DemographicCategory(BaseModel):
         verbose_name_plural = "Demographic Categories"
 
 
-# link demographic categories with events
-class EventDemographic(BaseModel):
-    event = models.ForeignKey(
-        Event, 
-        on_delete=models.CASCADE, 
-        related_name="event_demographics"
-    )
-    category = models.ForeignKey(
-        DemographicCategory, 
-        on_delete=models.CASCADE, 
-        related_name="event_demographics"
-    )
-    
-    def __str__(self):
-        return f"{self.category} for {self.event}"
-    
-    class Meta:
-        verbose_name = "Event Demographic"
-        verbose_name_plural = "Event Demographics"
-
-
-# store demographic responses from facilitators and participants
+# store demographic responses from participants
 class Demographics(BaseModel):
     event_demographic = models.ForeignKey(
         EventDemographic, 
@@ -59,7 +38,7 @@ class Demographics(BaseModel):
         related_name="demographics"
     )
     event_attendee = models.ForeignKey(
-        EventAttendee,
+        Participant,
         null=True, 
         blank=True,
         on_delete=models.CASCADE,
