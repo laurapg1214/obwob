@@ -1,0 +1,1 @@
+Event feedback app built for Bath Spa University & international partners. Real-time participant engagement and organizer insights, built with Python, Django, Ruby on Rails, and React. Supports live polling, QR-code check-ins, and detailed reporting to enhance event outcomes. Final projects for Altcademy & Harvardx.
