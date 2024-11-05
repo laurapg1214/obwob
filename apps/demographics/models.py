@@ -1,26 +1,18 @@
-from apps.common.models import BaseModel
-from apps.events.models import Event
+from apps.common.models import BaseModel, CustomField
 from apps.organizations.models import Organization
+from apps.participants.models import Participant
 from django.db import models
-#TODO: need EventDemographic and Participant models from Rails
 
 
+# TODO: add default demographic categories
 # store demographic categories with field type choices
 class DemographicCategory(BaseModel):
-    FIELD_TYPE_CHOICES = [
-        ("text", "Text"),
-        ("number", "Number"),
-        ("date", "Date"),
-        ("choice", "Choice"),
-    ]
-
-    organization = models.ForeignKey(
-        Organization, 
-        on_delete=models.CASCADE, 
+    custom_fields = models.ManyToManyField(
+        CustomField, 
+        blank=True, 
         related_name="demographic_categories"
     )
-    name = models.CharField(max_length=100)
-    field_type = models.CharField(max_length=10, choices=FIELD_TYPE_CHOICES)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -32,12 +24,12 @@ class DemographicCategory(BaseModel):
 
 # store demographic responses from participants
 class Demographics(BaseModel):
-    event_demographic = models.ForeignKey(
-        EventDemographic, 
+    DemographicCategory = models.ForeignKey(
+        DemographicCategory, 
         on_delete=models.CASCADE, 
         related_name="demographics"
     )
-    event_attendee = models.ForeignKey(
+    participant = models.ForeignKey(
         Participant,
         null=True, 
         blank=True,

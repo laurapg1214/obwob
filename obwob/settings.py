@@ -41,9 +41,12 @@ INSTALLED_APPS = [
     "apps.coordinators.apps.CoordinatorsConfig",
     "apps.demographics.apps.DemographicsConfig",
     "apps.events.apps.EventsConfig",
+    "apps.facilitators.apps.FacilitatorsConfig",
     "apps.organizations.apps.OrganizationsConfig",
+    "apps.participants.apps.ParticipantsConfig",
     "apps.questions.apps.QuestionsConfig",
     "apps.reports.apps.ReportsConfig",
+    "apps.responses.apps.ResponsesConfig",
 
     # allow react frontend to make requests to django by configuring cors headers
     "corsheaders",

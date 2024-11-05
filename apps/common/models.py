@@ -51,7 +51,8 @@ class BaseModel(models.Model):
         abstract = True  
 
 
-# for coordinators to add custom fields to models (currently only for Participants)
+# for coordinators to add custom fields to models 
+# currently only for Participant & Demographics models
 class CustomField(BaseModel):
     # field types
     FIELD_TYPES = [
@@ -62,26 +63,21 @@ class CustomField(BaseModel):
         ("CHOICE", "Choice"),
     ]
 
-    name=models.CharField(max_length=100, verbose_name="Custom Field Name")
-    type=models.CharField(
+    name = models.CharField(max_length=100, verbose_name="Custom Field Name")
+    type = models.CharField(
         max_length=10, 
         choices=FIELD_TYPES, 
         verbose_name="Custom Field Type"
     ) 
-    value=models.TextField(verbose_name="Custom Field Value")
-    is_valid=models.BooleanField(default=True, verbose_name="Is Valid")
+    value = models.TextField(verbose_name="Custom Field Value")
+    is_valid = models.BooleanField(default=True, verbose_name="Is Valid")
 
     #TODO: implement client-side selection of model to attach custom field to using below booleans
     #TODO: implement server-side validation for field_value based on field_type
-    is_participant_info=models.BooleanField(default=False)
+    # manytomany rel defined in respective models
+    is_participant_info = models.BooleanField(default=False)
     is_demographic=models.BooleanField(default=False)
-    is_coordinator_info=models.BooleanField(default=False)
-    is_event_info=models.BooleanField(default=False)
-    is_facilitator_info=models.BooleanField(default=False)
-    is_organization_info=models.BooleanField(default=False)
-    is_question_info=models.BooleanField(default=False)
-    is_reports_info=models.BooleanField(default=False)
-    is_responses_info=models.BooleanField(default=False)
+    # extend as needed to additional models
 
     class Meta:
         abstract = True
@@ -90,12 +86,12 @@ class CustomField(BaseModel):
     class CustomFieldChoice(BaseModel):
         # allow multiple choice options
         custom_field = models.ForeignKey(
-            CustomField,
+            "CustomField",
             on_delete=models.CASCADE,
             related_name="choices"
         )
-        choice_text=models.CharField(max_length=250, verbose_name="Choice Text")
-        is_valid=models.BooleanField(default=True, verbose_name="Is Valid")
+        choice_text = models.CharField(max_length=250, verbose_name="Choice Text")
+        is_valid = models.BooleanField(default=True, verbose_name="Is Valid")
 
         class Meta:
             abstract = True

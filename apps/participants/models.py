@@ -3,7 +3,7 @@ from apps.organizations.models import Organization
 from django.db import models
 
 
-class Participant(BaseModel, CustomField):
+class Participant(BaseModel):
     # optional unique username
     username = models.CharField(max_length=50, unique=True, blank=True)
     # emoji for optional participant self-identification within workshop 
@@ -13,6 +13,12 @@ class Participant(BaseModel, CustomField):
     email = models.EmailField(max_length=254, unique=True, null=True, blank=True)
     # TODO from phonenumber_field.modelfields import PhoneNumberField
     phone_number = models.CharField(max_length=50, null=True, blank=True)
+
+    custom_fields = models.ManyToManyField(
+        CustomField, 
+        blank=True, 
+        related_name="participants"
+    )
 
     participant_type = models.CharField(max_length=50, default="Participant")
     other_participant_type = models.ForeignKey(
@@ -43,7 +49,7 @@ class Participant(BaseModel, CustomField):
         verbose_name_plural = "Participants"
 
 
-class OtherParticipantType (BaseModel, CustomField):
+class OtherParticipantType (BaseModel):
     name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=250, blank=True)
     organization = models.ForeignKey(
