@@ -1,8 +1,12 @@
 from django.db import models
 from django.utils import timezone
+import uuid
 
 
 class BaseModel(models.Model):
+    # unique identifier for each record
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
     # timestamp
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -47,57 +51,56 @@ class BaseModel(models.Model):
         abstract = True  
 
 
-class AttendeeInfoModel(models.Model):
-    # unique_id can be chosen by user or automatically assigned
-    unique_id = models.CharField(max_length=50, unique=True, blank=True) 
-    first_name = models.CharField(max_length=100, blank=True)
-    last_name = models.CharField(max_length=100, blank=True)
-    email = models.EmailField(max_length=254, unique=True, null=True, blank=True)
-    # TODO from phonenumber_field.modelfields import PhoneNumberField
-    phone_number = models.CharField(max_length=50, null=True, blank=True)
+# for coordinators to add custom fields to models (currently only for Participants)
+class CustomField(BaseModel):
+    # field types
+    FIELD_TYPES = [
+        ("TEXT", "Text"),
+        ("NUMBER", "Number"),
+        ("DATE", "Date"),
+        # for choice options, see nested class CustomFieldChoice below
+        ("CHOICE", "Choice"),
+    ]
 
-    class CustomFieldValue(models.Model):
-        CUSTOM_FIELD_TYPES = [
-            ("text", "Text"),
-            ("number", "Number"),
-            ("date", "Date"),
-            # for choice options, see class CustomFieldChoice below
-            ("choice", "Choice"),
-        ]
+    name=models.CharField(max_length=100, verbose_name="Custom Field Name")
+    type=models.CharField(
+        max_length=10, 
+        choices=FIELD_TYPES, 
+        verbose_name="Custom Field Type"
+    ) 
+    value=models.TextField(verbose_name="Custom Field Value")
+    is_valid=models.BooleanField(default=True, verbose_name="Is Valid")
 
-        attendee = models.ForeignKey(
-            # string ref to avoid circular imports as defined w/in same class
-            "AttendeeInfoModel",
-            on_delete=models.CASCADE,
-            related_name="custom_field_values"
-        )
-        field_name = models.CharField(max_length=100)
-        field_type = models.CharField(max_length=10, choices=CUSTOM_FIELD_TYPES)
-        value=models.TextField()
+    #TODO: implement client-side selection of model to attach custom field to using below booleans
+    #TODO: implement server-side validation for field_value based on field_type
+    is_participant_info=models.BooleanField(default=False)
+    is_demographic=models.BooleanField(default=False)
+    is_coordinator_info=models.BooleanField(default=False)
+    is_event_info=models.BooleanField(default=False)
+    is_facilitator_info=models.BooleanField(default=False)
+    is_organization_info=models.BooleanField(default=False)
+    is_question_info=models.BooleanField(default=False)
+    is_reports_info=models.BooleanField(default=False)
+    is_responses_info=models.BooleanField(default=False)
 
-        class Meta:
-            abstract = True
-            unique_together = ("attendee", "field_name")
+    class Meta:
+        abstract = True
 
     # allows coordinators to provide choices in custom fields
-    class CustomFieldChoice(models.Model):
+    class CustomFieldChoice(BaseModel):
         # allow multiple choice options
-        custom_field_value = models.ForeignKey(
-            "CustomFieldValue",
+        custom_field = models.ForeignKey(
+            CustomField,
             on_delete=models.CASCADE,
             related_name="choices"
         )
-        choice_text = models.CharField(max_length=100)
-        # below: whether choice is currently valid/active; 
-        # allows soft deletion without removing from db, and filtering for active
-        is_valid = models.BooleanField(default=True)
+        choice_text=models.CharField(max_length=250, verbose_name="Choice Text")
+        is_valid=models.BooleanField(default=True, verbose_name="Is Valid")
 
         class Meta:
             abstract = True
             # ensure choices unique within each custom field
-            unique_together = ("custom_field_value", "choice_text")
-
-    class Meta:
-        abstract = True  
+            unique_together = ("custom_field", "choice_text")
+    
 
 
