@@ -9,7 +9,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('attendees', '0001_initial'),
         ('events', '0001_initial'),
         ('organizations', '0001_initial'),
     ]

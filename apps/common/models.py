@@ -70,7 +70,7 @@ class CustomField(BaseModel):
         verbose_name="Custom Field Type"
     ) 
     value = models.TextField(verbose_name="Custom Field Value")
-    is_valid = models.BooleanField(default=True, verbose_name="Is Valid")
+    is_active = models.BooleanField(default=True, verbose_name="Is Active")
 
     #TODO: implement client-side selection of model to attach custom field to using below booleans
     #TODO: implement server-side validation for field_value based on field_type
@@ -80,7 +80,8 @@ class CustomField(BaseModel):
     # extend as needed to additional models
 
     class Meta:
-        abstract = True
+        verbose_name = "Custom Field"
+        verbose_name_plural = "Custom Fields"
 
     # allows coordinators to provide choices in custom fields
     class CustomFieldChoice(BaseModel):
@@ -94,7 +95,8 @@ class CustomField(BaseModel):
         is_valid = models.BooleanField(default=True, verbose_name="Is Valid")
 
         class Meta:
-            abstract = True
+            verbose_name = "Custom Field Choice"
+            verbose_name_plural = "Custom Field Choices"
             # ensure choices unique within each custom field
             unique_together = ("custom_field", "choice_text")
     

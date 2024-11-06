@@ -1,4 +1,4 @@
-from apps.attendees.models import EventAttendee
+from apps.participants.models import Participant
 from apps.common.models import BaseModel
 from apps.questions.models import Question
 from django.db import models
@@ -7,7 +7,7 @@ from django.db import models
 class Response(BaseModel):
     text = models.TextField()
     event_attendee = models.ForeignKey(
-        EventAttendee, 
+        Participant, 
         # PROTECT to preserve all submitted responses
         on_delete=models.PROTECT, 
         related_name="responses"

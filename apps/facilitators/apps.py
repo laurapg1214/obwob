@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class FacilitatorsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'facilitators'
+    name = 'apps.facilitators'

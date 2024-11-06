@@ -42,19 +42,27 @@ def get_object_or_error(
 ### MODELS/CUSTOM LISTS & FUNCTIONS for API layer automation of serializers, viewsets & URL registrations
 MODELS_LIST = [
     # "app_name", model_name
-    # TODO insert authontication model
+    # TODO insert authentication model
     ("coordinators", "Coordinator"),
     ("demographics", "DemographicCategory"),
     ("demographics", "Demographics"),
+    ("facilitators", "Facilitator"),
     ("organizations", "Organization"),
+    ("participants", "Participant"),
+    ("participants", "OtherParticipantType"),
     ("questions", "Question"),
     # TODO insert reports model(s)
     ("events", "Event"), # dependencies on other serializers
+    ("events", "EventDemographicCategory"),
+    ("events", "EventFacilitator"),
+    ("events", "EventParticipant"),
+    ("events", "EventQuestion"),
+    ("events", "EventResponse"),
     ]
 
 CUSTOM_SERIALIZER_MODELS = [
     "Event",
-    "EventAttendee",
+    # "EventParticipant",
 ]
 
 
@@ -74,20 +82,24 @@ def get_model(app_name, model_name):
 def use_custom_serializer(model_name, serializers_dict):
     if model_name == "Event":
         return event_create_serializer(serializers_dict) 
+    #if model_name == "EventParticipant":
+        #return event_participant_create_serializer()
     
     
 def use_custom_viewset(model_name, serializers_dict):
     if model_name == "Event":
         return event_create_viewset(serializers_dict)
+    #if model_name == "EventParticipant":
+        #return event_participant_create_viewset()
     
 
 ### CUSTOM SERIALIZER FUNCTION ###
 def event_create_serializer(serializers_dict):
     class EventSerializer(serializers.ModelSerializer):
         # get the EventAttendee serializer for attendees 
-        event_attendee_serializer = serializers_dict.get(("attendees", "EventAttendee"))(many=True)
-        if event_attendee_serializer is None:
-            raise ValueError("EventAttendee serializer not found")
+        #event_participant_serializer = serializers_dict.get(("events", "EventParticipant"))(many=True)
+        #if event_participant_serializer is None:
+            #raise ValueError("EventParticipant serializer not found")
 
         # get the Questions serializer for questions
         questions_serializer = serializers_dict.get(("questions", "Question"))(many=True)
@@ -100,52 +112,53 @@ def event_create_serializer(serializers_dict):
 
         def create(self, validated_data):
             # extract attendees and questions data if present
-            attendees_data = validated_data.pop("attendees", []) 
+            #participants_data = validated_data.pop("participants", []) 
             questions_data = validated_data.pop("questions", [])
 
             # create the event object
             event = get_model("events", "Event").objects.create(**validated_data) 
 
             # prepare lists for bulk creation
-            attendees_to_add = []
+            #participants_to_add = []
             questions_to_add = []
 
-            # add attendees to the event
-            for attendee_data in attendees_data:
-                attendee_type = attendee_data.get("attendee_type")
+            # add participants to the event
+            # for participant_data in participants_data:
+            #     participant_type = participant_data.get("participant_type")
 
-                # map attendees to models for condensed code
-                attendee_model_mapping = {
-                    "participant": "attendees.Participant",
-                    "facilitator": "attendees.Facilitator"
-                }
+                # map participants to models for condensed code
+                # TODO: work out new mapping below
+                # participant_model_mapping = {
+                #     "participant": "attendees.Participant",
+                #     "facilitator": "attendees.Facilitator"
+                # }
 
                 # check for attendee type from standard models
-                if attendee_type in attendee_model_mapping:    
-                    attendee_model = attendee_model_mapping[attendee_type]
-                    attendee, created = attendee_model.objects.get_or_create(id=attendee_data["id"])
-                    attendees_to_add.append("attendees.EventAttendee"(
-                        event=event,
-                        attendee_type=attendee_type,
-                        **{attendee_type: attendee} # dynamic field assignment **unpacking dict
-                    )) 
+            #     if attendee_type in attendee_model_mapping:    
+            #         attendee_model = attendee_model_mapping[attendee_type]
+            #         attendee, created = attendee_model.objects.get_or_create(id=attendee_data["id"])
+            #         attendees_to_add.append("attendees.EventAttendee"(
+            #             event=event,
+            #             attendee_type=attendee_type,
+            #             **{attendee_type: attendee} # dynamic field assignment **unpacking dict
+            #         )) 
 
-                # check for custom attendee type
-                elif (custom_type_name := attendee_data.get("custom_attendee_type")):
-                    # check if custom type already exists for organization
-                    organization = event.organization
-                    custom_attendee_type, created = (
-                        "attendees.CustomAttendeeType".objects.get_or_create(
-                            organization=organization, 
-                            name=custom_type_name
-                        )
-                    )
-                    # assign custom type to attendee_type
-                    attendee_type = custom_attendee_type
+            #     # check for custom attendee type
+            #     elif (custom_type_name := attendee_data.get("custom_attendee_type")):
+            #         # check if custom type already exists for organization
+            #         organization = event.organization
+            #         custom_attendee_type, created = (
+            #             "attendees.CustomAttendeeType".objects.get_or_create(
+            #                 organization=organization, 
+            #                 name=custom_type_name
+            #             )
+            #         )
+            #         # assign custom type to attendee_type
+            #         attendee_type = custom_attendee_type
 
-            # bulk add attendees to event to minimise db hits
-            if attendees_to_add:
-                "attendees.EventAttendee".objects.bulk_create(attendees_to_add)
+            # # bulk add attendees to event to minimise db hits
+            # if attendees_to_add:
+            #     "attendees.EventAttendee".objects.bulk_create(attendees_to_add)
 
             # add questions to the event
             for question_data in questions_data:
@@ -182,6 +195,8 @@ def event_create_viewset(serializers_dict):
         serializer_class = event_create_serializer(serializers_dict)
 
     return EventViewSet
+
+# TODO: add event_participant_create_serializer & event_participant_create_viewset
 
 
 ### DYNAMICALLY GENERATE SERIALIZERS ###

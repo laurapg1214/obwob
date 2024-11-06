@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Event
-from apps.attendees.models import Participant
+from apps.participants.models import Participant
 from apps.questions.models import Question
 
 class EventAdmin(admin.ModelAdmin):

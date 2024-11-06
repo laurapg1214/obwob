@@ -12,6 +12,8 @@ class Question(BaseModel):
         on_delete=models.CASCADE, 
         related_name="questions", 
     )
+
+    is_active = models.BooleanField(default=True, verbose_name="Is Active")
         
     def __str__(self):
         return self.text

@@ -11,6 +11,8 @@ class Facilitator(BaseModel):
         on_delete=models.CASCADE,
         related_name="facilitators"
     )
+
+    is_active = models.BooleanField(default=True, verbose_name="Is Active")
     
     def __str__(self):
         return (
