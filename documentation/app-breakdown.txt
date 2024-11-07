@@ -1,3 +1,13 @@
+7 Nov 2024:
+Django models to be mirrored in Rails:
+EventDemographicCategory: when they set up an event in Django, coordinators will assign specific demographic categories to it. In the PWA, participants will enter their demographic data.
+EventFacilitator: when they set up an event in Django, coordinators will assign facilitators to it. These facilitators will have event permissions including creating and editing demographic data, participants and questions. They will also be responsible for pushing questions to participants' devices during the live event. 
+EventParticipant: participants will register for the event during it by scanning a qr code
+EventQuestion: when they set up an event in Django, coordinators will assign questions to it, which facilitators will push during the event.
+EventResponse: during the event, participants will submit responses to questions.
+
+---
+OLD:
 Coordinators App:
 - Purpose: Manage organization coordinators and their management of all event details
 - Models: Coordinator, Organization

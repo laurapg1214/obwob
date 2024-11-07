@@ -14,11 +14,17 @@ class Event(BaseModel):
     date = models.DateField()
     time = models.TimeField(blank=True, null=True)
     location = models.CharField(max_length=50, blank=True)
-    organizations = models.ManyToManyField(
-        Organization, 
-        related_name="events" 
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name="events"
     )
-
+    # related organizations that can access reports
+    related_organizations = models.ManyToManyField(
+        Organization,
+        blank=True,
+        related_name="shared_events"
+    )
     is_active = models.BooleanField(default=True, verbose_name="Is Active")
     
     def __str__(self):

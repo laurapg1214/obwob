@@ -1,4 +1,5 @@
 from apps.common.models import BaseModel
+from apps.events.models import Event
 from django.db import models
 
 

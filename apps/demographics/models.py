@@ -12,7 +12,12 @@ class DemographicCategory(BaseModel):
         blank=True, 
         related_name="demographic_categories"
     )
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    organization = models.ForeignKey(
+        Organization, 
+        on_delete=models.CASCADE,
+        related_name="demographic categories"
+    )
+    is_active = models.BooleanField(default=True, verbose_name="Is Active")
 
     def __str__(self):
         return self.name
