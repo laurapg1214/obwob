@@ -1,6 +1,5 @@
 from apps.common.models import BaseModel, CustomField
 from apps.organizations.models import Organization
-from apps.participants.models import Participant
 from django.db import models
 
 
@@ -28,27 +27,27 @@ class DemographicCategory(BaseModel):
 
 
 # store demographic responses from participants
-class Demographics(BaseModel):
-    DemographicCategory = models.ForeignKey(
-        DemographicCategory, 
-        on_delete=models.CASCADE, 
-        related_name="demographics"
-    )
-    participant = models.ForeignKey(
-        Participant,
-        null=True, 
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="demographics"
-    )
-    value = models.CharField(max_length=255)
+# class Demographics(BaseModel):
+#     DemographicCategory = models.ForeignKey(
+#         DemographicCategory, 
+#         on_delete=models.CASCADE, 
+#         related_name="demographics"
+#     )
+#     participant = models.ForeignKey(
+#         Participant,
+#         null=True, 
+#         blank=True,
+#         on_delete=models.CASCADE,
+#         related_name="demographics"
+#     )
+#     value = models.CharField(max_length=255)
 
-    def __str__(self):
-        return (
-            f"Response for {self.event_demographic.category} "
-            "by {self.event_attendee}"
-        )
+#     def __str__(self):
+#         return (
+#             f"Response for {self.event_demographic.category} "
+#             "by {self.event_attendee}"
+#         )
     
-    class Meta:
-        verbose_name = "Demographic"
-        verbose_name_plural = "Demographics"
+#     class Meta:
+#         verbose_name = "Demographic"
+#         verbose_name_plural = "Demographics"

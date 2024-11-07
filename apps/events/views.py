@@ -1,15 +1,48 @@
 from .models import Event
-from apps.questions.models import Question
-from apps.responses.models import Response
+# TODO: get_object_or_error from common.utils below
+from apps.common.utils import generate_serializers
+from apps.facilitator.models import Facilitator
+from apps.participant.models import Participant
 from django.http import Http404, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from io import BytesIO
+from .models import Event
+import qrcode
 from rest_framework import generics, viewsets
-from apps.common.utils import generate_serializers, get_object_or_error
+
+
+# generate qr code for facilitators & participants
+def generate_facilitator_qr(request, event_id, user_id, user_type):
+    # map user type to corresponding model, get user
+    if user_type == 'facilitator':
+        facilitator = get_object_or_404(Facilitator, id=user_id)
+    elif user_type == 'participant':
+        participant = get_object_or_404(Participant, id=user_id)
+    else:
+        raise Http404('Invalid user type')
+
+    # get the event
+    event = get_object_or_404(Event, id=event_id)
+
+    # generate data for the qr code
+    qr_data = f"https://obwob.com/scan/{event.id}/{user.id}"
+
+    # generate qr code
+    img = qrcode.make(qr_data)
+
+    # save qr code to memory and return as png
+    # initialize in-memory byte stream where the image data will be saved
+    img_io = BytesIO()
+    # save image to the img_io buffer
+    img.save(img_io)
+    # move file pointer to beginning of buffer
+    img_io.seek(0)
+
+    return HttpResponse(img_io, content_type="image/png")
 
 
 # get serializers_dict
 serializers_dict = generate_serializers()
-print("Serializers Dictionary:", serializers_dict)
 
 
 class EventCreateView(generics.CreateAPIView):
@@ -22,12 +55,12 @@ class EventCreateView(generics.CreateAPIView):
 
 ### orig setup below (pre-SPA setup) ###
 
-def index(request):
-    question_list = Question.objects.all()
-    context = {
-        "question_list": question_list,
-    }
-    return render(request, "obwob/index.html", context)
+# def index(request):
+#     question_list = Question.objects.all()
+#     context = {
+#         "question_list": question_list,
+#     }
+#     return render(request, "obwob/index.html", context)
 
 
 # custom error page

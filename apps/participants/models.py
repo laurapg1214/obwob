@@ -5,7 +5,7 @@ from django.db import models
 
 class Participant(BaseModel):
     # optional unique username
-    username = models.CharField(max_length=50, unique=True, blank=True)
+    username = models.CharField(max_length=50, blank=True, unique=True)
     # emoji for optional participant self-identification within workshop 
     emoji = models.CharField(max_length=10, blank=True) 
     first_name = models.CharField(max_length=100, blank=True)

@@ -11,6 +11,9 @@ class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
+    # allow for active/inactive selection
+    is_active = models.BooleanField(default=True, verbose_name="Is Active")
+
     # soft delete fields
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)

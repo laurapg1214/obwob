@@ -25,7 +25,6 @@ class Event(BaseModel):
         blank=True,
         related_name="shared_events"
     )
-    is_active = models.BooleanField(default=True, verbose_name="Is Active")
     
     def __str__(self):
         return f"{self.name}, {self.date}" 
