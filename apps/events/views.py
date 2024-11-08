@@ -11,13 +11,13 @@ import qrcode
 from rest_framework import generics, viewsets
 
 
-# generate qr code for facilitators & participants
-def generate_facilitator_qr(request, event_id, user_id, user_type):
+# generate qr code for facilitators/participants
+def generate_qr_code(request, event_id, user_id, user_type):
     # map user type to corresponding model, get user
     if user_type == 'facilitator':
-        facilitator = get_object_or_404(Facilitator, id=user_id)
+        user = get_object_or_404(Facilitator, id=user_id)
     elif user_type == 'participant':
-        participant = get_object_or_404(Participant, id=user_id)
+        user = get_object_or_404(Participant, id=user_id)
     else:
         raise Http404('Invalid user type')
 
